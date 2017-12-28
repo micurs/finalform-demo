@@ -2,7 +2,6 @@
 // import * as _ from 'lodash';
 import * as React from 'react';
 import { Form, Field, FormRenderProps, FieldRenderProps } from 'react-final-form';
-import * as Rx from 'rxjs/Rx';
 
 export interface FormData {
   first_name: string;
@@ -27,59 +26,28 @@ interface MyFormProps {
 
 export class MyForm  extends React.Component<MyFormProps> {
 
-  observableStream: Rx.Subscriber<string>;
-  emailSubscription: Rx.Subscription;
   emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-  emailValid: string | undefined;
-  emailValidationResolve: (( s: string | undefined ) => void) | undefined;
 
   constructor( p: MyFormProps ) {
     super(p);
   }
 
-  /**
-   * Here we setup the Observable subscription for email validation.
-   * We use debounceTime() to perform validation only when there are 1.5s of no new value
-   * Note: the observableStream is a wrapper around the subscriber; we use it to inject values
-   * in the stream when a new validation is required (see handleValidateEmail()).
-   */
-  componentDidMount() {
-    this.emailSubscription = new Rx.Observable<string>( (observer) => this.observableStream = observer )
-    .debounceTime(1500)
-    .subscribe( (val) => {
-      const isValid = this.emailRegex.test(val);
-      console.log('validation complete', val, isValid );
-      this.emailValid = isValid ? undefined : 'Invalid' ;
-      if ( this.emailValidationResolve ) {
-        this.emailValidationResolve(this.emailValid);
-        this.emailValidationResolve = undefined;
-      }
-      }
-    );
-  }
-
-  componentWillUnmount() {
-    this.emailSubscription.unsubscribe();
-  }
-
   validateRequired = ( value: string ) => {
+    console.log('validating required field ...');
     return value ? undefined : 'Required';
   }
 
-  handleValidateEmail = ( value: string ) => {
+  handleValidateEmail = ( value: string ): Promise<string> | string  => {
+    console.log('validating email...');
     if ( !value ) {
       return 'Required';
+    } else {
+      return new Promise<string> ( (resolve, reject) => {
+        const isValid = this.emailRegex.test(value);
+        console.log('validation complete', value, isValid );
+        setTimeout( () => resolve( isValid ? undefined : 'Invalid' ), 500 );
+      });
     }
-    if ( this.observableStream ) {
-      this.observableStream.next(value);  // Push the value into the Observable stream
-    }
-    return new Promise( ( resolve, reject ) => {
-      if ( this.emailValidationResolve ) {
-        console.log('abort previous validation ...');
-        this.emailValidationResolve('Invalid'); // Complete the previous promise without validation
-      }
-      this.emailValidationResolve = resolve;
-    });
   }
 
   render() {
@@ -87,41 +55,43 @@ export class MyForm  extends React.Component<MyFormProps> {
       <Form
         initialValue={emptyUser}
         onSubmit={this.props.onSubmit}
+        validateOnBlurr={false}
       >
         { ( formp: FormRenderProps ) => {
           // console.log('Invalid?', formp.invalid);
           return (
             <form onSubmit={formp.handleSubmit}>
-              <h2>🏁 Here is my final-form</h2>
+              <h2>🏁 final-form with async validation</h2>
               <div className="my-form-field" key="fname" >
                 <label>First Name</label>
-                <Field name="first_name" validate={this.validateRequired} >
-                  {(fp: FieldRenderProps) => {
+                <Field name="first_name" validate={this.validateRequired} validateFields={[ 'first_name' ]}>
+                  {({ meta, input }) => {
                     return (
                       <input
                         type="text"
-                        className={fp.meta.touched ? fp.meta.error || 'Valid' : ''}
-                        {...fp.input}
+                        className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                        {...input}
                       />);
                   }}
                 </Field>
               </div>
               <div className="my-form-field" key="lname">
                 <label>Last Name</label>
-                <Field name="last_name" validate={this.validateRequired}>
-                  {(fp: FieldRenderProps) => (
+                <Field name="last_name" validate={this.validateRequired} validateFields={[]}>
+                  {( { meta, input }) => (
                     <input
                       type="text"
-                      className={fp.meta.touched ? fp.meta.error || 'Valid' : ''}
-                      {...fp.input}
+                      className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                      {...input}
                     />)}
                 </Field>
               </div>
               <div className="my-form-field" key="email">
                 <label>Email</label>
-                <Field name="email" validate={this.handleValidateEmail} >
+                <Field name="email" validate={this.handleValidateEmail}  validateFields={[]}>
                   {( {meta, invalid, input}: FieldRenderProps ) => {
-                    const classval = meta.pristine ? '' : this.emailValid || 'Valid';
+                    const classval = !meta.pristine || meta.touched ? meta.error || 'Valid' : '';
+                    // console.log('email class=', classval, ' - error=', meta.error);
                     return <input {...input} type="email"  className={classval} />;
                   }}
                 </Field>
