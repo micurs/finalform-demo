@@ -1,5 +1,3 @@
-// /// <reference types="../../node_modules/react-final-form/dist" />
-// import * as _ from 'lodash';
 import * as React from 'react';
 import { Form, Field, FormRenderProps, FieldRenderProps } from 'react-final-form';
 
@@ -9,19 +7,14 @@ export interface FormData {
   email: string;
 }
 
-// interface FormDataErrors {
-//   first_name?: string;
-//   last_name?: string;
-//   email?: string;
-// }
-const emptyUser: FormData = {
-  first_name: '',
-  last_name: '',
-  email: ''
-};
+// const emptyUser = {
+//   first_name: '',
+//   last_name: '',
+//   email: ''
+// };
 
 interface MyFormProps {
-  onSubmit: ( formData?: FormData ) => void;
+  onSubmit: ( formData?: {} ) => void;
 }
 
 export class MyForm  extends React.Component<MyFormProps> {
@@ -33,7 +26,6 @@ export class MyForm  extends React.Component<MyFormProps> {
   }
 
   validateRequired = ( value: string ) => {
-    console.log('validating required field ...');
     return value ? undefined : 'Required';
   }
 
@@ -44,7 +36,6 @@ export class MyForm  extends React.Component<MyFormProps> {
     } else {
       return new Promise<string> ( (resolve, reject) => {
         const isValid = this.emailRegex.test(value);
-        console.log('validation complete', value, isValid );
         setTimeout( () => resolve( isValid ? undefined : 'Invalid' ), 500 );
       });
     }
@@ -53,49 +44,50 @@ export class MyForm  extends React.Component<MyFormProps> {
   render() {
     return (
       <Form
-        initialValue={emptyUser}
         onSubmit={this.props.onSubmit}
-        validateOnBlurr={false}
       >
         { ( formp: FormRenderProps ) => {
           // console.log('Invalid?', formp.invalid);
           return (
             <form onSubmit={formp.handleSubmit}>
               <h2>🏁 final-form with async validation</h2>
-              <div className="my-form-field" key="fname" >
-                <label>First Name</label>
-                <Field name="first_name" validate={this.validateRequired} validateFields={[ 'first_name' ]}>
-                  {({ meta, input }) => {
-                    return (
-                      <input
-                        type="text"
-                        className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
-                        {...input}
-                      />);
-                  }}
-                </Field>
-              </div>
-              <div className="my-form-field" key="lname">
-                <label>Last Name</label>
-                <Field name="last_name" validate={this.validateRequired} validateFields={[]}>
-                  {( { meta, input }) => (
+              <Field name="first_name" validate={this.validateRequired} validateFields={[]}>
+                {({ meta, input }) => (
+                  <div className="my-form-field" key="fname" >
+                    <label>First Name</label>
                     <input
-                      type="text"
-                      className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
-                      {...input}
-                    />)}
-                </Field>
-              </div>
-              <div className="my-form-field" key="email">
-                <label>Email</label>
-                <Field name="email" validate={this.handleValidateEmail}  validateFields={[]}>
-                  {( {meta, invalid, input}: FieldRenderProps ) => {
-                    const classval = !meta.pristine || meta.touched ? meta.error || 'Valid' : '';
-                    // console.log('email class=', classval, ' - error=', meta.error);
-                    return <input {...input} type="email"  className={classval} />;
-                  }}
-                </Field>
-              </div>
+                        type="text"
+                        placeholder="Your given name here"
+                        className={(!meta.pristine || meta.touched ? meta.error || 'Valid' : '') as string}
+                        {...input}
+                    />
+                  </div>
+                )}
+              </Field>
+              <Field name="last_name" validate={this.validateRequired} validateFields={[]}>
+                {( { meta, input }) => (
+                  <div className="my-form-field" key="lname">
+                    <label>Last Name</label>
+                    <input
+                        type="text"
+                        placeholder="Your last name here"
+                        className={(!meta.pristine || meta.touched ? meta.error || 'Valid' : '') as string}
+                        {...input}
+                    />
+                  </div>
+                )}
+              </Field>
+              <Field name="email" validate={this.handleValidateEmail}  validateFields={[]}>
+                {( {meta, input}: FieldRenderProps ) => {
+                  const classval = (!meta.pristine || meta.touched ? meta.error || 'Valid' : '') as string;
+                  // console.log('email class=', classval, ' - error=', meta.error);
+                  return (
+                  <div className="my-form-field" key="email">
+                    <label>Email</label>
+                    <input {...input} type="email" placeholder="your email here" className={classval} />
+                  </div>);
+                }}
+              </Field>
               <div>
                   <p>The form is {formp.invalid ? 'Invalid' : 'Valid'} {formp.validating ? 'and validating ...' : ''}</p>
                   <input
