@@ -41,17 +41,8 @@ export class MyForm2  extends React.Component<MyFormProps> {
    */
   componentDidMount() {
     this.validator = new Validator<string>('Required');
-    const debObs = this.validator.observable
-    .debounceTime(1500);
-
-    debObs
-    .distinctUntilChanged( (p, q) => p !== q )
-    .subscribe( () => {
-      console.log('validation same as before', this.emailValid );
-      this.validator.resolve(this.emailValid);
-    });
-    debObs
-    .distinctUntilChanged()
+    this.validator.observable
+    .debounceTime(1500)
     .map( (val) => {
       const isValid = this.emailRegex.test(val);
       console.log('validation complete', val, isValid );
