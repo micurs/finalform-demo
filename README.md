@@ -71,8 +71,10 @@ So, when trying to import the `final-form` in a TypeScript code we get an error:
 
 To solve this we need to set `"noImplicitAny": false` in tsconfig.json.
 
-The library is very young and the author is introducing breaking changes on a dailu basis.
+The library is very young and the author is introducing breaking changes on a daily basis.
 In the past 7 days at the time of this writing 2 major breaking changes were introduced moving the version from 1.3.5 to 3.0.0 !
+
+### Form and Field
 
 When using `react-final-form` we use the `<Form>` element to control a regular `<form>`:
 
@@ -105,7 +107,7 @@ Inside the form we can use the `<Field>` component to wrap input elements that c
 
 The `Form` component accepts a propriety called mutators that can be used to validate single Field.
 
-The validate function is called on firt rendering (this is different than Formik).
+The validate function is called on first rendering (this is different than Formik).
 
 To enable the submit of the form the conditions are the same as in Formik, since the rendering function
 do receive 3 variables defining the submittability of the form: `!pristine && !error && !invalid`:
@@ -127,28 +129,30 @@ export function MyForm() {
 
 ## Single field validation
 
-The `<Field>` component offers a very convenient Sync and Async `validate` prperty that can be used to link the
+The `<Field>` component offers a very convenient Sync and Async `validate` property that can be used to link the
 filed to a validation function to perform check on a single field.
 
 This is a nice plus in comparison with Formik.
 
 The `Field` even accepts a [validateFields property](https://github.com/final-form/react-final-form#validatefields-string) that can contain an array of fields to validate when this one change. When the array is empty only the current field should be validated when changed.
 
-This feature *seems to work* in a more recent version of the library.
+This feature *seems to work* in the most recent version of the library (while it was not working on an earlier version).
 But the use of the props is upsetting the tsc compiler because of a missing typedef in the library.
 
 ## Negatives
 
-This is perhaps the most negative element on this library.
-The type definitions do not seems to be complete and/or setup properly,
-so the in editor support is sometime compromized.
+This is perhaps the most negative element on this library: the type definitions do not seems to be complete,
+so the editor support is sometime compromised and your code may just not compile at all.
 
-However, the author is fixing these problems quickly and we could submit PR to add some fix ourselves.
+However, the author is fixing these problems quickly, we could also submit PR to add some fix ourselves.
 
-As of now I to set `"noImplicitAny": false` to be able to compile without errors using this library.
+As of now I had to set `"noImplicitAny": false` to be able to compile without errors using this library.
+Hopefully this will be fixed soon with updated type definitions.
 
-The other factor to keep in mind is how young this library is.
+This is a pretty young library.
 As mentioned the author is committing breaking changes and have been releasing multiple major versions of the library within few days.
+
+
 
 
 
