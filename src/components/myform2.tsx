@@ -33,6 +33,7 @@ export class MyForm2  extends React.Component<MyFormProps> {
 
   constructor( p: MyFormProps ) {
     super(p);
+    this.validator = new Validator<string>('Required');
   }
 
   /**
@@ -40,7 +41,6 @@ export class MyForm2  extends React.Component<MyFormProps> {
    * We use debounceTime() to perform validation only when there are 1.5s of no new value
    */
   componentDidMount() {
-    this.validator = new Validator<string>('Required');
     this.validator.observable
     .debounceTime(1500)
     .map( (val) => {
@@ -72,42 +72,44 @@ export class MyForm2  extends React.Component<MyFormProps> {
           // console.log('Invalid?', formp.invalid);
           return (
             <form onSubmit={formp.handleSubmit}>
-              <h2>🏁 Here is my final-form</h2>
+              <h2>🏁 final-form with RxJs validation</h2>
               <div className="my-form-field" key="fname" >
                 <label>First Name</label>
-                <Field name="first_name" validate={this.validateRequired} >
-                  {(fp: FieldRenderProps) => {
+                <Field name="first_name" validate={this.validateRequired} validateFields={[]}>
+                  {({ meta, input }) => {
                     return (
                       <input
                         type="text"
-                        className={fp.meta.touched ? fp.meta.error || 'Valid' : ''}
-                        {...fp.input}
+                        className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                        {...input}
                       />);
                   }}
                 </Field>
               </div>
               <div className="my-form-field" key="lname">
                 <label>Last Name</label>
-                <Field name="last_name" validate={this.validateRequired}>
-                  {(fp: FieldRenderProps) => (
+                <Field name="last_name" validate={this.validateRequired} validateFields={[]}>
+                  {( { meta, input } ) => (
                     <input
                       type="text"
-                      className={fp.meta.touched ? fp.meta.error || 'Valid' : ''}
-                      {...fp.input}
+                      className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                      {...input}
                     />)}
                 </Field>
               </div>
               <div className="my-form-field" key="email">
                 <label>Email</label>
-                <Field name="email" validate={this.validator ? this.validator.validate : undefined} >
+                <Field name="email" validate={this.validator.validate} validateFields={[]}>
                   {( {meta, invalid, input}: FieldRenderProps ) => {
-                    const classval = meta.pristine ? '' : this.emailValid || 'Valid';
+                    // const classval = meta.pristine ? '' : this.emailValid || 'Valid';
+                    const classval = ( !formp.validating && (!meta.pristine || meta.touched)) ? meta.error || 'Valid' : '';
+                    // console.log('email class=', classval, ' - error=', meta.error);
                     return <input {...input} type="email"  className={classval} />;
                   }}
                 </Field>
               </div>
               <div>
-                  <p>The form is {formp.invalid ? 'Invalid' : 'Valid'} {formp.validating ? 'and validating ...' : ''}</p>
+                  <p>The form is {formp.validating ? 'Validating...' : formp.invalid ? 'Invalid' : 'Valid'}</p>
                   <input
                     type="submit"
                     disabled={formp.pristine || formp.error || formp.validating || formp.invalid}
