@@ -1,28 +1,22 @@
 import * as React from 'react';
 import { Form, Field, FormRenderProps, FieldRenderProps } from 'react-final-form';
-// import * as Rx from 'rxjs/Rx';
 
 import Validator from './rxValidator';
 
-export interface FormData {
+export interface FormData2 {
   first_name: string;
   last_name: string;
   email: string;
 }
 
-// interface FormDataErrors {
-//   first_name?: string;
-//   last_name?: string;
-//   email?: string;
-// }
-const emptyUser: FormData = {
-  first_name: '',
-  last_name: '',
-  email: ''
-};
+// const emptyUser = {
+//   first_name: '',
+//   last_name: '',
+//   email: ''
+// };
 
 interface MyFormProps {
-  onSubmit: ( formData?: FormData ) => void;
+  onSubmit: ( formData?: {} ) => void;
 }
 
 export class MyForm2  extends React.Component<MyFormProps> {
@@ -65,7 +59,6 @@ export class MyForm2  extends React.Component<MyFormProps> {
   render() {
     return (
       <Form
-        initialValue={emptyUser}
         onSubmit={this.props.onSubmit}
       >
         { ( formp: FormRenderProps ) => {
@@ -80,7 +73,7 @@ export class MyForm2  extends React.Component<MyFormProps> {
                     return (
                       <input
                         type="text"
-                        className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                        className={((!meta.pristine || meta.touched) ? meta.error || 'Valid' : '') as string}
                         {...input}
                       />);
                   }}
@@ -92,7 +85,7 @@ export class MyForm2  extends React.Component<MyFormProps> {
                   {( { meta, input } ) => (
                     <input
                       type="text"
-                      className={!meta.pristine || meta.touched ? meta.error || 'Valid' : ''}
+                      className={(!meta.pristine || meta.touched ? meta.error || 'Valid' : '' ) as string}
                       {...input}
                     />)}
                 </Field>
@@ -100,9 +93,9 @@ export class MyForm2  extends React.Component<MyFormProps> {
               <div className="my-form-field" key="email">
                 <label>Email</label>
                 <Field name="email" validate={this.validator.validate} validateFields={[]}>
-                  {( {meta, invalid, input}: FieldRenderProps ) => {
+                  {( {meta, input}: FieldRenderProps ) => {
                     // const classval = meta.pristine ? '' : this.emailValid || 'Valid';
-                    const classval = ( !formp.validating && (!meta.pristine || meta.touched)) ? meta.error || 'Valid' : '';
+                    const classval = (( !formp.validating && (!meta.pristine || meta.touched)) ? meta.error || 'Valid' : '') as string;
                     // console.log('email class=', classval, ' - error=', meta.error);
                     return <input {...input} type="email"  className={classval} />;
                   }}
@@ -123,43 +116,3 @@ export class MyForm2  extends React.Component<MyFormProps> {
     );
   }
 }
-
-// function validateEmail( value: string ): Promise<string> {
-//   return new Promise<string>( (resolve, reject) => {
-//     if (!value) {
-//       resolve('Required');
-//     } else {
-//       const result = Rx.Observable.of(value)
-//                        .debounceTime(1000);
-//       result.subscribe(
-//           (v) => {
-//             return !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(v) ?
-//               resolve('Invalid') :
-//               resolve(undefined);
-//           }
-//         );
-//     }
-//   });
-// }
-
-// function validate( formData: FormData ): Promise<FormDataErrors> {
-//   return new Promise<FormDataErrors>( (resolve, reject) => {
-//     setTimeout(
-//       () => {
-//         const errors: FormDataErrors = {};
-//         if ( !formData.first_name ) {
-//           errors.first_name = 'Required';
-//         }
-//         if ( !formData.last_name ) {
-//           errors.last_name = 'Required';
-//         }
-//         if ( !formData.email ) {
-//           errors.email = 'Required';
-//         } else if ( !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email) ) {
-//           errors.email = 'Invalid';
-//         }
-//         resolve(errors);
-//       },
-//       3000 );
-//   });
-// }
