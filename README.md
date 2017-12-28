@@ -127,20 +127,29 @@ export function MyForm() {
 
 ## Single field validation
 
-The `<Field>` component offers a very convenient Sync and Async validate attribute that can be used to validate a single field.
+The `<Field>` component offers a very convenient Sync and Async `validate` prperty that can be used to link the
+filed to a validation function to perform check on a single field.
 
 This is a nice plus in comparison with Formik.
 
-So you can easily perform only field by field validation that get triggered only when a specific field is changed.
+The `Field` even accepts a [validateFields property](https://github.com/final-form/react-final-form#validatefields-string) that can contain an array of fields to validate when this one change. When the array is empty only the current field should be validated when changed.
+
+This feature *seems to work* in a more recent version of the library.
+But the use of the props is upsetting the tsc compiler because of a missing typedef in the library.
 
 ## Negatives
 
-This is perhaps the most negative element on this library. The type definitions do not seems to be complete and/or setup properly,
-so the in editor support is compromized. I do expect this to be fixed in the near future but as of this writing you need
-to loose the type checking in the Typescript compiler `"noImplicitAny": false` to use this library.
+This is perhaps the most negative element on this library.
+The type definitions do not seems to be complete and/or setup properly,
+so the in editor support is sometime compromized.
 
-The other factor to keep in mind is how young this library is. As mentioned the author is committing breaking changes and
-have been releasing multiple major versions of the library within few days.
+However, the author is fixing these problems quickly and we could submit PR to add some fix ourselves.
+
+As of now I to set `"noImplicitAny": false` to be able to compile without errors using this library.
+
+The other factor to keep in mind is how young this library is.
+As mentioned the author is committing breaking changes and have been releasing multiple major versions of the library within few days.
+
 
 
 
