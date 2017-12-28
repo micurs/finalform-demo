@@ -1,14 +1,18 @@
 import * as Rx from 'rxjs/Rx';
 
 export default class Validator<T> {
-  public observable: Rx.Observable<T>;
-  public validationResolve?: ( s: T | undefined ) => void;
+  private validationResolve?: ( s: T | undefined ) => void;
+  private _observable: Rx.Observable<T>;
   private onEmpty: T | undefined;
   private observer: Rx.Subscriber<T>;
 
   constructor( onEmpty?: T ) {
     this.onEmpty = onEmpty;
-    this.observable = new Rx.Observable<T>( (observer) => this.observer = observer );
+  }
+
+  public get observable() {
+    this._observable = new Rx.Observable<T>( (observer) => this.observer = observer );
+    return this._observable;
   }
 
   public validate = ( value: T ): Promise<T> | T => {
