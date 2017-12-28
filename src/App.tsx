@@ -2,7 +2,7 @@ import * as React from 'react';
 import './App.css';
 
 import { MyForm, FormData } from './components/myform';
-import { MyForm2, FormData as FormData2 } from './components/myform2';
+import { MyForm2, FormData2 } from './components/myform2';
 
 const logo = require('./logo.svg');
 
