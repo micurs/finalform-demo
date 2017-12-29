@@ -150,12 +150,6 @@ As of now I had to set `"noImplicitAny": false` to be able to compile without er
 Hopefully this will be fixed soon with updated type definitions.
 
 This is a pretty young library.
-As mentioned the author is committing breaking changes and have been releasing multiple major versions of the library within few days.
+As mentioned, the authors have been committing frequent breaking changes and have been releasing multiple major versions of the library within just few days.
 
-
-
-
-
-
-
-
+I do expect the code will stabilize soon and the major issues have been addressed.
