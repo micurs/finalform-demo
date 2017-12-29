@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Form, Field, FormRenderProps, FieldRenderProps } from 'react-final-form';
 
-import Validator from './rxValidator';
+import Validator from '../common/rxvalidator';
+import '../common/rxmapdistinct';
 
 export interface FormData2 {
   first_name: string;
@@ -37,7 +38,7 @@ export class MyForm2  extends React.Component<MyFormProps> {
   componentDidMount() {
     this.validator.observable
     .debounceTime(1500)
-    .map( (val) => {
+    .mapDistinctUntilChanged( (val) => {
       const isValid = this.emailRegex.test(val);
       console.log('validation complete', val, isValid );
       return isValid ? undefined : 'Invalid' ;
