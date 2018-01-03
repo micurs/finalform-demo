@@ -2,7 +2,8 @@
 import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 
-export type MapDistinct<T> = <R>( project: (value: T) => R ) => Observable<R>;
+export type MapDistinct<T> = <R>( project: (value: T) => R,
+                                  compare?: (a: T, b: T) => boolean ) => Observable<R>;
 
 /**
  * Custom operator for Observable.
@@ -11,7 +12,11 @@ export type MapDistinct<T> = <R>( project: (value: T) => R ) => Observable<R>;
  * @param this is the Observable
  * @param project is the mapping function that computes R
  */
-function mapDistinctUntilChanged<T, R>( this: Observable<T>, project: (value: T) => R ) {
+function mapDistinctUntilChanged<T, R>(
+  this: Observable<T>,
+  project: (value: T) => R,
+  compare?: (a: T, b: T) => boolean
+) {
   return Observable.create( (subscriber: Subscriber<R>) => {
     const source = this;
     let lastValue: T;
@@ -19,7 +24,11 @@ function mapDistinctUntilChanged<T, R>( this: Observable<T>, project: (value: T)
     const subscription = source.subscribe(
       ( value: T ) => {
         try {
-          lastResult = value === lastValue ? lastResult : project(value);
+          if ( compare !== undefined ) {
+            lastResult = compare(value, lastValue) ? lastResult : project(value);
+          } else {
+            lastResult = value === lastValue ? lastResult : project(value);
+          }
           subscriber.next( lastResult );
           lastValue = value;
         } catch ( err ) {

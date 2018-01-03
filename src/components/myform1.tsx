@@ -1,27 +1,21 @@
 import * as React from 'react';
 import { Form, Field, FormRenderProps, FieldRenderProps } from 'react-final-form';
 
-export interface FormData {
+export interface FormData1 {
   first_name: string;
   last_name: string;
   email: string;
 }
 
-// const emptyUser = {
-//   first_name: '',
-//   last_name: '',
-//   email: ''
-// };
-
-interface MyFormProps {
+interface MyForm1Props {
   onSubmit: ( formData?: {} ) => void;
 }
 
-export class MyForm  extends React.Component<MyFormProps> {
+export class MyForm1  extends React.Component<MyForm1Props> {
 
   emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
-  constructor( p: MyFormProps ) {
+  constructor( p: MyForm1Props ) {
     super(p);
   }
 
@@ -50,7 +44,7 @@ export class MyForm  extends React.Component<MyFormProps> {
           // console.log('Invalid?', formp.invalid);
           return (
             <form onSubmit={formp.handleSubmit}>
-              <h2>🏁 final-form with async validation</h2>
+              <h2>🏁 react-final-form with async validation</h2>
               <Field name="first_name" validate={this.validateRequired} validateFields={[]}>
                 {({ meta, input }) => (
                   <div className="my-form-field" key="fname" >

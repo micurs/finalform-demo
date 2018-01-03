@@ -66,7 +66,7 @@ export class MyForm2  extends React.Component<MyFormProps> {
           // console.log('Invalid?', formp.invalid);
           return (
             <form onSubmit={formp.handleSubmit}>
-              <h2>🏁 final-form with RxJs validation</h2>
+              <h2>🏁 react-final-form with RxJs validation</h2>
               <div className="my-form-field" key="fname" >
                 <label>First Name</label>
                 <Field name="first_name" validate={this.validateRequired} validateFields={[]}>
